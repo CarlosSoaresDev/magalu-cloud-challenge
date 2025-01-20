@@ -1,0 +1,59 @@
+version: '3.4'
+
+services:
+  mgc-api-app:
+    build:
+      dockerfile: cmd/api/Dockerfile
+      context: .
+    image: mgc-api-go
+    container_name: mgc-api-app
+    ports:
+      - 80:80
+    networks:
+      - prod
+    depends_on:
+      - "mgc-redis"
+      - "mgc-webhook-app"
+    environment:
+      - REDIS_HOST_ADDRESS=mgc-redis
+      - PORT=80
+    env_file:
+      - .env.prod
+  
+  mgc-webhook-app:
+    build:
+      dockerfile: cmd/webhook/Dockerfile
+      context: .
+    image: mgc-webhook-go
+    container_name: main-mgc-webhook-app
+    ports:
+      - 3000:3000
+    networks:
+      - prod
+    depends_on:
+      - "mgc-redis"
+    environment:
+      - REDIS_HOST_ADDRESS=mgc-redis
+      - PORT=3000
+    env_file:
+      - .env.prod
+
+  mgc-redis:
+    image: redis
+    container_name: mgc-redis
+    restart: always
+    command:
+      - redis-server
+      - --appendonly yes 
+      - --loglevel ${REDIS_LOGLEVEL:-warning}
+      - --requirepass "${REDIS_HOST_PASSWORD}"
+    ports:
+      -  6379:6379  
+    networks:
+      - prod     
+    env_file:
+      - .env.prod
+
+networks:
+  prod:
+    driver: bridge

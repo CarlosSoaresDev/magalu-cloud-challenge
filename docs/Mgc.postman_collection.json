@@ -1,0 +1,171 @@
+{
+	"info": {
+		"_postman_id": "507945d4-aea6-41ae-959e-7d6cfdbe9e07",
+		"name": "Mgc",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "3616692"
+	},
+	"item": [
+		{
+			"name": "Currencies",
+			"item": [
+				{
+					"name": "GetAll",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-mgc-correlationId",
+								"value": "{{$guid}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://your_server/api/v1/currencies",
+							"protocol": "http",
+							"host": [
+								"your_server"
+							],
+							"path": [
+								"api",
+								"v1",
+								"currencies"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ConvertExchangeRate",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-mgc-correlationId",
+								"value": "{{$guid}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"amount\": 500,\r\n    \"from_currency\": \"CAD\",\r\n    \"to_currency\": \"BRL\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://your_server/api/v1/currencies/convert",
+							"protocol": "http",
+							"host": [
+								"your_server"
+							],
+							"path": [
+								"api",
+								"v1",
+								"currencies",
+								"convert"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Gateways",
+			"item": [
+				{
+					"name": "GetAllAvaiableGateways",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-mgc-correlationId",
+								"value": "{{$guid}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://your_server/api/v1/gateways/Avaiables",
+							"protocol": "http",
+							"host": [
+								"your_server"
+							],
+							"path": [
+								"api",
+								"v1",
+								"gateways",
+								"Avaiables"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetAllTransactions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-mgc-correlationId",
+								"value": "{{$guid}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://your_server/api/v1/gateways/transactions",
+							"protocol": "http",
+							"host": [
+								"your_server"
+							],
+							"path": [
+								"api",
+								"v1",
+								"gateways",
+								"transactions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-mgc-correlationId",
+								"value": "{{$guid}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n \"gateway\": \"Stripe\",\r\n \"amount\": 51,\r\n \"currency\": \"BRL\",\r\n \"payment_method\": \"credit_card\",\r\n \"card_details\": {\r\n \"number\": \"4242424242424242\",\r\n \"expiry\": \"1226\",\r\n \"cvv\": \"567\"\r\n }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://your_server/api/v1/gateways",
+							"protocol": "http",
+							"host": [
+								"your_server"
+							],
+							"path": [
+								"api",
+								"v1",
+								"gateways"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
