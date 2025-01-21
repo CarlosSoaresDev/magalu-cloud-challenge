@@ -26,7 +26,7 @@ func IsEmptyOrNull(value string) bool {
 	return len(strings.TrimSpace(value)) == 0
 }
 
-// GetPort retrieves the port number from the environment variable "PORT".
+// GetEnvPortOrDefault retrieves the port number from the environment variable "PORT".
 // If the environment variable is not set or is empty, it returns the provided default value.
 //
 // Parameters:
@@ -36,7 +36,7 @@ func IsEmptyOrNull(value string) bool {
 // Returns:
 //
 //	The port number as a string.
-func GetPort(valueDefault string) string {
+func GetEnvPortOrDefault(valueDefault string) string {
 	port := os.Getenv("PORT")
 	if IsEmptyOrNull(port) {
 		port = valueDefault

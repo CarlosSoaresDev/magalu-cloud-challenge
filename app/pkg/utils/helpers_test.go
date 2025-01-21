@@ -48,8 +48,8 @@ func TestGetPort(t *testing.T) {
 			os.Setenv("PORT", tt.envPort)
 			defer os.Unsetenv("PORT")
 
-			if got := utils.GetPort(tt.defaultPort); got != tt.expectedPort {
-				t.Errorf("GetPort() = %v, want %v", got, tt.expectedPort)
+			if got := utils.GetEnvPortOrDefault(tt.defaultPort); got != tt.expectedPort {
+				t.Errorf("GetEnvPortOrDefault() = %v, want %v", got, tt.expectedPort)
 			}
 		})
 	}

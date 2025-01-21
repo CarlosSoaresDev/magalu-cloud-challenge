@@ -17,7 +17,7 @@ func main() {
 	logger.Info("Start webhook application")
 	engine := setupServer(logger)
 
-	port := utils.GetPort("8081")
+	port := utils.GetEnvPortOrDefault("8081")
 	if err := engine.Run(fmt.Sprintf(":%s", port)); err != nil {
 		logger.Fatal("Error starting webhook application", zap.Error(err))
 	}
@@ -34,6 +34,7 @@ func setupServer(logger *zap.Logger) *gin.Engine {
 		AllowHeaders: []string{"*"},
 	}))
 
-	router.Init(engine, logger)
+	go router.Init(engine, logger)
+
 	return engine
 }

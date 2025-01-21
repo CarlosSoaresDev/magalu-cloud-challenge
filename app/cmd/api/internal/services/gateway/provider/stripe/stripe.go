@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/CarlosSoaresDev/magalu-cloud-challenge/cmd/api/internal/models"
+	"github.com/CarlosSoaresDev/magalu-cloud-challenge/pkg/utils"
 	"github.com/stripe/stripe-go"
 	"github.com/stripe/stripe-go/paymentintent"
 	"github.com/stripe/stripe-go/token"
@@ -40,39 +41,24 @@ func (sg *StripeGateway) ProcessPayment(payment models.Gateway, correlationId st
 
 	stripe.Key = os.Getenv("STRIPE_SECRET_KEY")
 
-	expiry := strings.Split(payment.CardDetails.Expiry, "/")
-	month := expiry[0]
-	year := expiry[1]
-
 	if !supportedMethods[payment.PaymentMethod] {
 		return nil, fmt.Errorf("unsupported payment method: %s. Supported methods are: %v", payment.PaymentMethod, keys(supportedMethods))
 	}
 
-	tokenParams := &stripe.TokenParams{
-		Card: &stripe.CardParams{
-			Number:   stripe.String(payment.CardDetails.Number),
-			ExpMonth: stripe.String(month),
-			ExpYear:  stripe.String(year),
-			CVC:      stripe.String(payment.CardDetails.Cvv),
-		},
-	}
-
-	token, err := token.New(tokenParams)
-	if err != nil {
-		fmt.Print("Is Testing")
-	}
+	token, err := sg.createToken(payment)
+	paymentMethodTest := getPaymentMethodTest(err, payment)
 
 	param := &stripe.PaymentIntentParams{
 		Amount:             stripe.Int64(int64(payment.Amount * 100)),
 		Currency:           stripe.String(string(stripe.Currency(payment.Currency))),
-		PaymentMethodTypes: stripe.StringSlice([]string{"card"}),
+		PaymentMethodTypes: stripe.StringSlice([]string{payment.PaymentMethod}),
 		Confirm:            stripe.Bool(true),
 	}
 
-	if err == nil {
+	if utils.IsEmptyOrNull(paymentMethodTest) {
 		param.Source = &token.ID
 	} else {
-		param.PaymentMethod = stripe.String("pm_card_visa")
+		param.PaymentMethod = stripe.String(paymentMethodTest)
 	}
 
 	param.AddMetadata("correlation_id", correlationId)
@@ -83,6 +69,63 @@ func (sg *StripeGateway) ProcessPayment(payment models.Gateway, correlationId st
 	}
 
 	return &pi.ID, nil
+}
+
+// createToken generates a Stripe token for the provided payment details.
+// It extracts the card expiry month and year from the payment's CardDetails,
+// and uses them along with the card number and CVC to create a stripe.TokenParams object.
+// The function then calls the Stripe API to create and return a new token.
+//
+// Parameters:
+//   - payment: A models.Gateway object containing the card details.
+//
+// Returns:
+//   - *stripe.Token: A pointer to the created Stripe token.
+//   - error: An error object if the token creation fails.
+func (sg *StripeGateway) createToken(payment models.Gateway) (*stripe.Token, error) {
+	expiry := strings.Split(payment.CardDetails.Expiry, "/")
+	month := expiry[0]
+	year := expiry[1]
+
+	tokenParams := &stripe.TokenParams{
+		Card: &stripe.CardParams{
+			Number:   stripe.String(payment.CardDetails.Number),
+			ExpMonth: stripe.String(month),
+			ExpYear:  stripe.String(year),
+			CVC:      stripe.String(payment.CardDetails.Cvv),
+		},
+	}
+
+	return token.New(tokenParams)
+}
+
+// getPaymentMethodTest returns a default payment method test string based on the provided card number
+// if an error occurs during token creation. It uses predefined card numbers to determine the payment method.
+//
+// Parameters:
+// - err: an error that indicates if there was an issue creating the token.
+// - payment: a models.Gateway object that contains card details.
+//
+// Returns:
+// - A string representing the default payment method test.
+func getPaymentMethodTest(err error, payment models.Gateway) string {
+	var paymentMethodTest string
+	if err != nil {
+		fmt.Print("error to create token, using default payment method test")
+		switch payment.CardDetails.Number {
+		case "4242424242424242":
+			paymentMethodTest = "pm_card_visa"
+		case "4000056655665556":
+			paymentMethodTest = "pm_card_visa_debit"
+		case "5555555555554444":
+			paymentMethodTest = "pm_card_mastercard"
+		case "5200828282828210":
+			paymentMethodTest = "pm_card_mastercard_debit"
+		default:
+			paymentMethodTest = "pm_card_visa"
+		}
+	}
+	return paymentMethodTest
 }
 
 // keys returns a slice of strings containing the keys of the provided map.

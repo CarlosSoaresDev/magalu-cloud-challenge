@@ -18,7 +18,7 @@ func main() {
 	logger.Info("Start api applications")
 	engine := setupServer(logger)
 
-	port := utils.GetPort("8080")
+	port := utils.GetEnvPortOrDefault("8080")
 	if err := engine.Run(fmt.Sprintf(":%s", port)); err != nil {
 		logger.Fatal("Error starting api application", zap.Error(err))
 	}

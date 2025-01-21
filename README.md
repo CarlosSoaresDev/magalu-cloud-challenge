@@ -35,6 +35,21 @@ The following webhook endpoints are available in the backend API:
 
 These endpoints are configured to process incoming webhook notifications from PayPal and Stripe, ensuring that your application can respond to events such as payment completions, subscription updates, and more.
 
+
+## Test Payment Methods
+
+For testing purposes, you can use the following card numbers with their corresponding payment methods:
+
+| Brand               | Number            | CVC          | Date            |
+|---------------------|-------------------|--------------|-----------------|
+| Visa                | 4242424242424242  | Any 3 digits | Any future date |
+| Visa (debit)        | 4000056655665556  | Any 3 digits | Any future date |
+| Mastercard          | 5555555555554444  | Any 3 digits | Any future date |
+| Mastercard (debit)  | 5200828282828210  | Any 3 digits | Any future date |
+
+These test card numbers can be used to simulate various payment scenarios in a development environment.
+		
+
 ## Features
 
 - Multi-currency support with real-time conversion.
