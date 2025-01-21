@@ -1,8 +1,8 @@
 package models
 
 type CardDetails struct {
-	Number string `json:"number" binding:"required"`
-	Expiry string `json:"expiry" binding:"required"`
+	Number string `json:"number" binding:"required,cnumber"`
+	Expiry string `json:"expiry" binding:"required,cexpirate"`
 	Cvv    string `json:"cvv" binding:"required,len=3"`
 }
 

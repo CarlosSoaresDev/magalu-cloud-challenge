@@ -11,6 +11,10 @@ import (
 	"github.com/stripe/stripe-go/token"
 )
 
+var supportedMethods = map[string]bool{
+	"card": true,
+}
+
 type StripeGateway struct{}
 
 // ProcessPayment processes a payment using the Stripe gateway.
@@ -37,11 +41,12 @@ func (sg *StripeGateway) ProcessPayment(payment models.Gateway, correlationId st
 	stripe.Key = os.Getenv("STRIPE_SECRET_KEY")
 
 	expiry := strings.Split(payment.CardDetails.Expiry, "/")
-	if len(expiry) != 2 {
-		return nil, fmt.Errorf("invalid expiry date format")
-	}
 	month := expiry[0]
 	year := expiry[1]
+
+	if !supportedMethods[payment.PaymentMethod] {
+		return nil, fmt.Errorf("unsupported payment method: %s. Supported methods are: %v", payment.PaymentMethod, keys(supportedMethods))
+	}
 
 	tokenParams := &stripe.TokenParams{
 		Card: &stripe.CardParams{
@@ -51,6 +56,7 @@ func (sg *StripeGateway) ProcessPayment(payment models.Gateway, correlationId st
 			CVC:      stripe.String(payment.CardDetails.Cvv),
 		},
 	}
+
 	token, err := token.New(tokenParams)
 	if err != nil {
 		fmt.Print("Is Testing")
@@ -77,4 +83,23 @@ func (sg *StripeGateway) ProcessPayment(payment models.Gateway, correlationId st
 	}
 
 	return &pi.ID, nil
+}
+
+// keys returns a slice of strings containing the keys of the provided map.
+// The input is a map where the keys are strings and the values are booleans.
+// The output is a slice of strings containing all the keys from the input map.
+//
+// Parameters:
+//
+//	supportedMethods - a map with string keys and boolean values.
+//
+// Returns:
+//
+//	A slice of strings containing all the keys from the input map.
+func keys(supportedMethods map[string]bool) []string {
+	keys := make([]string, 0, len(supportedMethods))
+	for k := range supportedMethods {
+		keys = append(keys, k)
+	}
+	return keys
 }

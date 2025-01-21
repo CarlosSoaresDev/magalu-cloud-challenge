@@ -120,7 +120,7 @@ sh run.sh
 
 The `run.sh` script will build and start the Docker containers as defined in the `docker-compose.yml` file, setting up the necessary environment for the application to run.
 
-## How to use Magalu Cloud
+## How to run on Magalu Cloud
 
 1. Create an account on Magalu Cloud [here](https://id.magalu.com/account/signup?protocol=oauth2&response_type=code&client_id=2c547d34-0dd1-11ed-861d-0242ac120002&redirect_uri=https://console.magalu.cloud/api/login/idmagalu&choose_tenants=true&scope=virtual-machine.read%20virtual-machine.write%20block-storage.read%20block-storage.write%20object-storage.read%20object-storage.write%20network.read%20network.write%20api-consulta.read%20pa:allow-lists:read%20pa:payment-methods:read%20pa:clients:create%20mke.read%20mke.write%20dbaas.read%20dbaas.write%20cpo:read%20cpo:write%20usr:tr-sign-terms%20usr:tr-user-data%20usr:tr-sshkey-r%20usr:tr-sshkey-w%20cms:cloud-product-management:read-basic%20pa:tenants:read%20pa:groups:read%20pa:groups:create%20pa:groups:update%20pa:groups:delete%20pa:delegations:read%20pa:delegations:write%20pa:delegations:delete%20pa:api-products:read%20pa:payment-methods:create%20pa:accounts-business:update%20pa:accounts:create%20pa:accounts:update%20pa:scopes:read%20pa:accounts:read%20pa:scopes-approval:update%20pa:payment-methods:update%20usr:user-standing:bucket-read%20bss-customer:read%20bss-customer:write%20pa:cloud-cli:features%20profile%20pa:payment-methods:delete%20usr:user-standing:block-read%20usr:tr-preview-w%20pa:sa:manage)
 2. Go to the Magalu Cloud console

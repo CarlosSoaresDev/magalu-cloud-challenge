@@ -20,7 +20,7 @@ func TestProcessPayment_Successful(t *testing.T) {
 		Gateway:       "Stripe",
 		Amount:        100.00,
 		Currency:      "USD",
-		PaymentMethod: "tok_visa",
+		PaymentMethod: "card",
 		CardDetails: models.CardDetails{
 			Expiry: "12/23",
 		},
@@ -35,11 +35,12 @@ func TestProcessPayment_Successful(t *testing.T) {
 	assert.NoError(t, err)
 }
 
-func TestProcessPayment_InvalidExpiryDateFormat(t *testing.T) {
+func TestProcessPayment_InvalidPaymentMethod(t *testing.T) {
 	// Arrange
 	sg := &StripeGateway{}
 	payment := models.Gateway{}
-	payment.CardDetails.Expiry = "1234"
+	payment.PaymentMethod = "1234"
+	payment.CardDetails.Expiry = "12/23"
 	setupMockEnvironment()
 
 	// Action
@@ -49,5 +50,5 @@ func TestProcessPayment_InvalidExpiryDateFormat(t *testing.T) {
 	// Assert
 	assert.Error(t, err)
 	assert.Nil(t, paymentIntentID)
-	assert.Equal(t, "invalid expiry date format", err.Error())
+	assert.Equal(t, "unsupported payment method: 1234. Supported methods are: [card]", err.Error())
 }
